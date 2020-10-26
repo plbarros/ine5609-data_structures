@@ -1,0 +1,92 @@
+class circularList:
+    class node:
+            __slots__ = "elem", "nxt"
+
+            def __init__(self, elem, nxt):
+                self.elem = elem
+                self.nxt = nxt
+
+    def __init__(self):
+        self.tail = None
+        self.size = 0
+
+    def __len__(self):
+        return self.size
+
+    def get(self, elem):
+        if self.tail is None:
+            return None
+        else:
+            pivot = self.tail.nxt
+            while pivot != self.tail and pivot.elem != elem:
+                pivot = pivot.nxt
+            if pivot.elem != elem:
+                return None
+        return pivot
+
+    def is_empty(self):
+        return self.size == 0
+
+    def push(self, elem):
+        new = self.node(elem, None)
+        if self.is_empty():
+            self.tail = new
+            self.tail.nxt = self.tail
+        else:
+            new.nxt = self.tail.nxt
+            self.tail.nxt = new
+        self.size += 1
+
+    def remove(self, pivot):
+        if self.size == 1 or self.is_empty():
+            self.tail = None
+            self.size = 0
+        else:
+            if pivot.nxt == self.tail:
+                pivot.nxt = pivot.nxt.nxt
+                self.size -= 1
+                pivot = self.tail
+            else:
+                pivot.nxt = pivot.nxt.nxt
+                self.size -= 1
+        
+
+
+
+def solveJosephus(n, m):
+    circle = circularList()
+    z = n
+    while z > 0:
+        circle.push(z)
+        z -= 1
+    pivot = circle.tail.nxt
+    while circle.size != 1:
+        if m == 1:
+            circle.remove(pivot)
+            pivot = pivot.nxt
+        else:
+            mem = pivot
+            j = 1
+            while j < m:
+                pivot = pivot.nxt
+                j += 1
+            if mem.elem == pivot.nxt.elem:
+                while pivot.nxt.elem == mem.elem:
+                    pivot = pivot.nxt
+                circle.remove(pivot)
+                pivot = pivot.nxt
+            else:
+                circle.remove(pivot)
+                pivot = pivot.nxt
+    return pivot.elem
+
+
+    
+num = int(input())
+i = 0
+while i < num:
+    n = int(input())
+    m = int(input())
+    res = solveJosephus(n, m)
+    i = i + 1
+    print("Usando n=%d, m=%d, resultado=%d" % (n, m, res))
